@@ -19,9 +19,10 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 	}
 
 	todoListModel := models.TodoList{
-		Owner:  user.Username,
-		UserId: user.Id,
-		Todos:  make([]*models.Todo, len(reqBody.Todos)),
+		Owner:     user.Username,
+		UserId:    user.Id,
+		Completed: false,
+		Todos:     make([]*models.Todo, len(reqBody.Todos)),
 	}
 
 	for i, v := range reqBody.Todos {
@@ -49,10 +50,11 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 	}
 
 	todoListResource := data.TodoListResourceResponseDTO{
-		Id:     list.Id,
-		UserId: user.Id,
-		Owner:  list.Owner,
-		Todos:  todosResource,
+		Id:        list.Id,
+		UserId:    user.Id,
+		Owner:     list.Owner,
+		Completed: list.Completed,
+		Todos:     todosResource,
 	}
 
 	return &todoListResource, nil
@@ -112,8 +114,9 @@ func (s *TodoListServiceImpl) GetList(listId string, username string) (*data.Tod
 	}
 
 	listResponse := data.TodoListGetResponseDTO{
-		Owner: list.Owner,
-		Todos: make([]*data.TodoGetResponseInListDTO, len(list.Todos)),
+		Owner:     list.Owner,
+		Completed: list.Completed,
+		Todos:     make([]*data.TodoGetResponseInListDTO, len(list.Todos)),
 	}
 
 	for i := range list.Todos {
@@ -180,10 +183,11 @@ func (s *TodoListServiceImpl) PatchList(reqBody *data.TodoListPatchDTO, listId s
 	}
 
 	responseList := data.TodoListResourceResponseDTO{
-		Id:     patchedList.Id,
-		UserId: patchedList.UserId,
-		Owner:  patchedList.Owner,
-		Todos:  make([]*data.TodoResourceResponseDTO, len(patchedList.Todos)),
+		Id:        patchedList.Id,
+		UserId:    patchedList.UserId,
+		Owner:     patchedList.Owner,
+		Completed: patchedList.Completed,
+		Todos:     make([]*data.TodoResourceResponseDTO, len(patchedList.Todos)),
 	}
 
 	for i := range patchedList.Todos {
@@ -292,9 +296,10 @@ func (s *TodoListServiceImpl) GetLists(userId string) (*[]*data.TodoListResource
 	for i := range lists {
 
 		listsResponse[i] = &data.TodoListResourceResponseDTO{
-			Id:    lists[i].Id,
-			Owner: lists[i].Owner,
-			Todos: make([]*data.TodoResourceResponseDTO, len(lists[i].Todos)),
+			Id:        lists[i].Id,
+			Owner:     lists[i].Owner,
+			Completed: lists[i].Completed,
+			Todos:     make([]*data.TodoResourceResponseDTO, len(lists[i].Todos)),
 		}
 
 		for j := range lists[i].Todos {

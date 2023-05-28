@@ -1,9 +1,9 @@
 package models
 
 type User struct {
-	Id        string      `gorm:"not null"`
-	Username  string      `gorm:"primary_key;not null"`
+	Id        string      `gorm:"primary_key"`
+	Username  string      `gorm:"not null"`
 	Password  string      `gorm:"not null"`
 	Role      string      `gorm:"not null"`
-	Todolists []*TodoList `gorm:"foreignKey:ListId;constraint:onDelete:CASCADE,onUpdate:CASCADE"`
+	Todolists []*TodoList `gorm:"foreignKey:UserId;constraint:onDelete:CASCADE,onUpdate:CASCADE"`
 }

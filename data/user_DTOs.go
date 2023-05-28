@@ -12,6 +12,6 @@ type UserLoginDTO struct {
 }
 
 type UserResponseDTO struct {
-	Id       string
-	Username string
+	Id       string `json:"userId"`
+	Username string `json:"username"`
 }

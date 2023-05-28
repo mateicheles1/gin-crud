@@ -1,18 +1,19 @@
 package data
 
 type TodoListGetResponseDTO struct {
-	Owner string
-	Todos []*TodoGetResponseInListDTO
+	Owner     string                      `json:"owner"`
+	Completed bool                        `json:"completed"`
+	Todos     []*TodoGetResponseInListDTO `json:"todos"`
 }
 
 type TodoGetResponseInListDTO struct {
-	Id        string
-	Content   string
-	Completed bool
+	Id        string `json:"todoId"`
+	Content   string `json:"content"`
+	Completed bool   `json:"completed"`
 }
 
 type TodoGetResponseDTO struct {
-	ListId    string
-	Content   string
-	Completed bool
+	ListId    string `json:"todoListId"`
+	Content   string `json:"content"`
+	Completed bool   `json:"completed"`
 }

@@ -43,9 +43,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println("Token parsed for user:", claims["username"])
-		fmt.Println("Token parsed for user:", claims["userId"])
-
 		ctx.Set("userId", claims["userId"])
 		ctx.Set("username", claims["username"])
 		ctx.Set("role", claims["role"])
