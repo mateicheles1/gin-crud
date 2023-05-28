@@ -5,5 +5,5 @@ type User struct {
 	Username  string      `gorm:"primary_key;not null"`
 	Password  string      `gorm:"not null"`
 	Role      string      `gorm:"not null"`
-	Todolists []*TodoList `gorm:"foreignKey:Owner;constraint:onDelete:CASCADE,onUpdate:CASCADE"`
+	Todolists []*TodoList `gorm:"foreignKey:ListId;constraint:onDelete:CASCADE,onUpdate:CASCADE"`
 }

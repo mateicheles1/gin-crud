@@ -1,7 +1,7 @@
 package data
 
 type TodoListPatchDTO struct {
-	Owner string `json:"owner" binding:"required"`
+	Completed bool `json:"completed" binding:"required"`
 }
 
 type TodoPatchDTO struct {

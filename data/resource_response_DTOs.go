@@ -1,9 +1,10 @@
 package data
 
 type TodoListResourceResponseDTO struct {
-	Id    string                     `json:"id"`
-	Owner string                     `json:"owner"`
-	Todos []*TodoResourceResponseDTO `json:"todos"`
+	Id     string                     `json:"id"`
+	UserId string                     `json:"userId"`
+	Owner  string                     `json:"owner"`
+	Todos  []*TodoResourceResponseDTO `json:"todos"`
 }
 
 type TodoResourceResponseDTO struct {

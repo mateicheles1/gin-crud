@@ -98,7 +98,7 @@ func (db *TodoListDBImpl) GetTodo(todoId string) (*models.Todo, error) {
 	return &todo, nil
 }
 
-func (db *TodoListDBImpl) PatchList(owner string, listId string, user *models.User) (*models.TodoList, error) {
+func (db *TodoListDBImpl) PatchList(completed bool, listId string) (*models.TodoList, error) {
 	var list models.TodoList
 
 	err := db.lists.Preload("Todos").First(&list, "id = ?", listId).Error
@@ -111,19 +111,10 @@ func (db *TodoListDBImpl) PatchList(owner string, listId string, user *models.Us
 		return nil, err
 	}
 
-	list.Owner = owner
-	user.Username = owner
-
-	errTwo := db.lists.Table("users").Where("id = ?", user.Id).Update("username", user.Username).Error
+	errTwo := db.lists.Table("todo_lists").Where("id = ?", list.Id).Update("completed", completed).Error
 
 	if errTwo != nil {
 		return nil, errTwo
-	}
-
-	errThree := db.lists.Table("todo_lists").Where("id = ?", list.Id).Update("owner", list.Owner).Error
-
-	if errThree != nil {
-		return nil, errThree
 	}
 
 	return &list, nil

@@ -17,9 +17,9 @@ func (c *Controller) CreateList(ctx *gin.Context) {
 		return
 	}
 
-	username := ctx.MustGet("username").(string)
+	userId := ctx.MustGet("userId").(string)
 
-	list, err := c.service.CreateList(&reqBody, username)
+	list, err := c.service.CreateList(&reqBody, userId)
 
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)

@@ -3,7 +3,7 @@ package service
 import "github.com/mateicheles1/golang-crud/data"
 
 type TodoListService interface {
-	CreateList(reqBody *data.TodoListCreateRequestDTO, username string) (*data.TodoListResourceResponseDTO, error)
+	CreateList(reqBody *data.TodoListCreateRequestDTO, userId string) (*data.TodoListResourceResponseDTO, error)
 	CreateTodo(reqBody *data.TodoCreateRequestDTO, userId string, listId string) (*data.TodoResourceResponseDTO, error)
 	GetList(listId string, username string) (*data.TodoListGetResponseDTO, error)
 	GetTodo(todoId string, userId string) (*data.TodoGetResponseDTO, error)

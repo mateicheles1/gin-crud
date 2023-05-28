@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -11,10 +10,18 @@ import (
 	"github.com/mateicheles1/golang-crud/models"
 )
 
-func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO, username string) (*data.TodoListResourceResponseDTO, error) {
+func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO, userId string) (*data.TodoListResourceResponseDTO, error) {
+
+	user, err := s.db.GetUser(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
 	todoListModel := models.TodoList{
-		Owner: username,
-		Todos: make([]*models.Todo, len(reqBody.Todos)),
+		Owner:  user.Username,
+		UserId: user.Id,
+		Todos:  make([]*models.Todo, len(reqBody.Todos)),
 	}
 
 	for i, v := range reqBody.Todos {
@@ -42,9 +49,10 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 	}
 
 	todoListResource := data.TodoListResourceResponseDTO{
-		Id:    list.Id,
-		Owner: list.Owner,
-		Todos: todosResource,
+		Id:     list.Id,
+		UserId: user.Id,
+		Owner:  list.Owner,
+		Todos:  todosResource,
 	}
 
 	return &todoListResource, nil
@@ -165,16 +173,17 @@ func (s *TodoListServiceImpl) PatchList(reqBody *data.TodoListPatchDTO, listId s
 		return nil, errors.New("action not allowed")
 	}
 
-	patchedList, err := s.db.PatchList(reqBody.Owner, listId, user)
+	patchedList, err := s.db.PatchList(reqBody.Completed, listId)
 
 	if err != nil {
 		return nil, err
 	}
 
 	responseList := data.TodoListResourceResponseDTO{
-		Id:    patchedList.Id,
-		Owner: patchedList.Owner,
-		Todos: make([]*data.TodoResourceResponseDTO, len(patchedList.Todos)),
+		Id:     patchedList.Id,
+		UserId: patchedList.UserId,
+		Owner:  patchedList.Owner,
+		Todos:  make([]*data.TodoResourceResponseDTO, len(patchedList.Todos)),
 	}
 
 	for i := range patchedList.Todos {
@@ -370,8 +379,6 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 	if err != nil {
 		return "", err
 	}
-
-	fmt.Println("Token for user:", user.Username, signedToken)
 
 	return signedToken, nil
 }
