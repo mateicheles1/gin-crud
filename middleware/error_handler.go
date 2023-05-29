@@ -23,7 +23,7 @@ func ErrorHandler() gin.HandlerFunc {
 					Int("Status code", http.StatusBadRequest).
 					Msgf("Bad request: %s", err)
 
-				ctx.JSON(http.StatusBadRequest, "invalid request body JSON syntax")
+				ctx.JSON(http.StatusBadRequest, "invalid request")
 				return
 
 			case http.StatusInternalServerError:

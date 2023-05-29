@@ -118,15 +118,21 @@ func (db *TodoListDBImpl) PatchList(completed bool, listId string) (*models.Todo
 		return nil, err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	return &list, nil
 }
 
 func (db *TodoListDBImpl) PatchTodo(completed bool, todoId string) (*models.Todo, error) {
 	var todo models.Todo
 
-	err := db.lists.First(&todo, "id = ?", todoId).Error
+	tx := db.lists.Begin()
 
-	if err != nil {
+	if err := tx.Table("todos").Where("id = ?", todoId).Update("completed", completed).Error; err != nil {
+		tx.Rollback()
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, gorm.ErrRecordNotFound
 		}
@@ -134,12 +140,18 @@ func (db *TodoListDBImpl) PatchTodo(completed bool, todoId string) (*models.Todo
 		return nil, err
 	}
 
-	todo.Completed = completed
+	if err := tx.Table("todos").Where("id = ?", todoId).First(&todo).Error; err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, gorm.ErrRecordNotFound
+		}
 
-	errTwo := db.lists.Table("todos").Where("id = ?", todo.Id).Update("completed", todo.Completed).Error
+		return nil, err
+	}
 
-	if errTwo != nil {
-		return nil, errTwo
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, err
 	}
 
 	return &todo, nil

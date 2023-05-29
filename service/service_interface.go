@@ -12,7 +12,7 @@ type TodoListService interface {
 	DeleteList(listId string, username string) error
 	DeleteTodo(todoId string, username string) error
 	GetLists(userId string, completedBool *bool) (*[]*data.TodoListResourceResponseDTO, error)
-	GetTodos(listId string, username string) (*[]*data.TodoGetResponseInListDTO, error)
+	GetTodos(listId string, username string, completedBool *bool) (*[]*data.TodoGetResponseInListDTO, error)
 	CreateUser(reqBody *data.UserCreateDTO) (*data.UserResponseDTO, error)
 	Login(reqBody *data.UserLoginDTO) (string, error)
 }

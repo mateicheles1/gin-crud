@@ -246,8 +246,27 @@ func (c *Controller) GetLists(ctx *gin.Context) {
 func (c *Controller) GetTodos(ctx *gin.Context) {
 	username := ctx.MustGet("username").(string)
 	listId := ctx.Param("id")
+	query := ctx.DefaultQuery("completed", "")
 
-	todos, err := c.service.GetTodos(listId, username)
+	var completedBool *bool
+
+	if query != "" {
+
+		switch query {
+		case "true":
+			tempBool := true
+			completedBool = &tempBool
+		case "false":
+			tempBool := false
+			completedBool = &tempBool
+		default:
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid query "))
+			return
+		}
+
+	}
+
+	todos, err := c.service.GetTodos(listId, username, completedBool)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

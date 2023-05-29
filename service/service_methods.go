@@ -313,7 +313,7 @@ func (s *TodoListServiceImpl) GetLists(userId string, completedBool *bool) (*[]*
 	return &listsResponse, nil
 }
 
-func (s *TodoListServiceImpl) GetTodos(listId string, username string) (*[]*data.TodoGetResponseInListDTO, error) {
+func (s *TodoListServiceImpl) GetTodos(listId string, username string, completedBool *bool) (*[]*data.TodoGetResponseInListDTO, error) {
 	list, err := s.db.GetList(listId)
 
 	if err != nil {
@@ -324,14 +324,33 @@ func (s *TodoListServiceImpl) GetTodos(listId string, username string) (*[]*data
 		return nil, errors.New("action not allowed")
 	}
 
-	responseTodo := make([]*data.TodoGetResponseInListDTO, len(list.Todos))
+	var responseTodo []*data.TodoGetResponseInListDTO
+
+	if completedBool != nil {
+
+		for i := range list.Todos {
+			if list.Todos[i].Completed == *completedBool {
+				todo := &data.TodoGetResponseInListDTO{
+					Id:        list.Todos[i].Id,
+					Content:   list.Todos[i].Content,
+					Completed: list.Todos[i].Completed,
+				}
+
+				responseTodo = append(responseTodo, todo)
+			}
+		}
+
+		return &responseTodo, nil
+	}
 
 	for i := range list.Todos {
-		responseTodo[i] = &data.TodoGetResponseInListDTO{
+		todo := &data.TodoGetResponseInListDTO{
 			Id:        list.Todos[i].Id,
 			Content:   list.Todos[i].Content,
 			Completed: list.Todos[i].Completed,
 		}
+
+		responseTodo = append(responseTodo, todo)
 	}
 
 	return &responseTodo, nil
