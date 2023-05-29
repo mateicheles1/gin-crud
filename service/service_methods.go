@@ -18,7 +18,7 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 		return nil, err
 	}
 
-	todoListModel := models.TodoList{
+	listModel := models.TodoList{
 		Owner:     user.Username,
 		UserId:    user.Id,
 		Completed: false,
@@ -26,27 +26,16 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 	}
 
 	for i, v := range reqBody.Todos {
-		todoListModel.Todos[i] = &models.Todo{
+		listModel.Todos[i] = &models.Todo{
 			Content:   v,
 			Completed: false,
 		}
 	}
 
-	list, err := s.db.CreateList(&todoListModel)
+	list, err := s.db.CreateList(&listModel)
 
 	if err != nil {
 		return nil, err
-	}
-
-	todosResource := make([]*data.TodoResourceResponseDTO, len(list.Todos))
-
-	for i := range list.Todos {
-		todosResource[i] = &data.TodoResourceResponseDTO{
-			Id:        list.Todos[i].Id,
-			ListId:    list.Todos[i].ListId,
-			Content:   list.Todos[i].Content,
-			Completed: list.Todos[i].Completed,
-		}
 	}
 
 	todoListResource := data.TodoListResourceResponseDTO{
@@ -54,7 +43,16 @@ func (s *TodoListServiceImpl) CreateList(reqBody *data.TodoListCreateRequestDTO,
 		UserId:    user.Id,
 		Owner:     list.Owner,
 		Completed: list.Completed,
-		Todos:     todosResource,
+		Todos:     make([]*data.TodoResourceResponseDTO, len(list.Todos)),
+	}
+
+	for i := range list.Todos {
+		todoListResource.Todos[i] = &data.TodoResourceResponseDTO{
+			Id:        list.Todos[i].Id,
+			ListId:    list.Todos[i].ListId,
+			Content:   list.Todos[i].Content,
+			Completed: list.Todos[i].Completed,
+		}
 	}
 
 	return &todoListResource, nil
@@ -120,12 +118,11 @@ func (s *TodoListServiceImpl) GetList(listId string, username string) (*data.Tod
 	}
 
 	for i := range list.Todos {
-		todoInListResponse := data.TodoGetResponseInListDTO{
+		listResponse.Todos[i] = &data.TodoGetResponseInListDTO{
 			Id:        list.Todos[i].Id,
 			Content:   list.Todos[i].Content,
 			Completed: list.Todos[i].Completed,
 		}
-		listResponse.Todos[i] = &todoInListResponse
 	}
 
 	return &listResponse, nil
@@ -284,8 +281,9 @@ func (s *TodoListServiceImpl) DeleteTodo(todoId string, username string) error {
 	return nil
 }
 
-func (s *TodoListServiceImpl) GetLists(userId string) (*[]*data.TodoListResourceResponseDTO, error) {
-	lists, err := s.db.GetLists(userId)
+func (s *TodoListServiceImpl) GetLists(userId string, completedBool *bool) (*[]*data.TodoListResourceResponseDTO, error) {
+
+	lists, err := s.db.GetLists(userId, completedBool)
 
 	if err != nil {
 		return nil, err
@@ -303,13 +301,11 @@ func (s *TodoListServiceImpl) GetLists(userId string) (*[]*data.TodoListResource
 		}
 
 		for j := range lists[i].Todos {
-			todoResponse := &data.TodoResourceResponseDTO{
+			listsResponse[i].Todos[j] = &data.TodoResourceResponseDTO{
 				Id:        lists[i].Todos[j].Id,
 				Content:   lists[i].Todos[j].Content,
 				Completed: lists[i].Todos[j].Completed,
 			}
-
-			listsResponse[i].Todos[j] = todoResponse
 		}
 
 	}

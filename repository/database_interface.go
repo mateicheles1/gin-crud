@@ -15,7 +15,7 @@ type TodoListDB interface {
 	PatchTodo(completed bool, todoId string) (*models.Todo, error)
 	DeleteList(listId string) error
 	DeleteTodo(todoId string) error
-	GetLists(userId string) ([]*models.TodoList, error)
+	GetLists(userId string, completedBool *bool) ([]*models.TodoList, error)
 	CreateUser(userModel *models.User) (*models.User, error)
 	Login(reqBody *data.UserLoginDTO) (*models.User, error)
 }

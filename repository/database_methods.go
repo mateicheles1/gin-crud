@@ -99,11 +99,13 @@ func (db *TodoListDBImpl) GetTodo(todoId string) (*models.Todo, error) {
 }
 
 func (db *TodoListDBImpl) PatchList(completed bool, listId string) (*models.TodoList, error) {
+
 	var list models.TodoList
 
-	err := db.lists.Preload("Todos").First(&list, "id = ?", listId).Error
+	tx := db.lists.Begin()
 
-	if err != nil {
+	if err := tx.Table("todo_lists").Where("id = ?", listId).Update("completed", completed).Error; err != nil {
+		tx.Rollback()
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, gorm.ErrRecordNotFound
 		}
@@ -111,10 +113,9 @@ func (db *TodoListDBImpl) PatchList(completed bool, listId string) (*models.Todo
 		return nil, err
 	}
 
-	errTwo := db.lists.Table("todo_lists").Where("id = ?", list.Id).Update("completed", completed).Error
-
-	if errTwo != nil {
-		return nil, errTwo
+	if err := tx.Table("todo_lists").Where("id = ?", listId).Preload("Todos").First(&list).Error; err != nil {
+		tx.Rollback()
+		return nil, err
 	}
 
 	return &list, nil
@@ -172,7 +173,7 @@ func (db *TodoListDBImpl) DeleteTodo(todoId string) error {
 	return nil
 }
 
-func (db *TodoListDBImpl) GetLists(userId string) ([]*models.TodoList, error) {
+func (db *TodoListDBImpl) GetLists(userId string, completedBool *bool) ([]*models.TodoList, error) {
 	var user models.User
 
 	err := db.lists.Preload("Todolists.Todos").First(&user, "id = ?", userId).Error
@@ -183,6 +184,19 @@ func (db *TodoListDBImpl) GetLists(userId string) ([]*models.TodoList, error) {
 		}
 
 		return nil, err
+	}
+
+	if completedBool != nil {
+
+		var filtredList []*models.TodoList
+
+		for _, list := range user.Todolists {
+			if list.Completed == *completedBool {
+				filtredList = append(filtredList, list)
+			}
+		}
+
+		return filtredList, nil
 	}
 
 	return user.Todolists, nil

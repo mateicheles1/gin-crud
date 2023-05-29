@@ -220,8 +220,16 @@ func (c *Controller) DeleteTodo(ctx *gin.Context) {
 
 func (c *Controller) GetLists(ctx *gin.Context) {
 	userId := ctx.MustGet("userId").(string)
+	query := ctx.DefaultQuery("completed", "")
 
-	lists, err := c.service.GetLists(userId)
+	var completedBool *bool
+
+	if query != "" {
+		tempBool := query == "true"
+		completedBool = &tempBool
+	}
+
+	lists, err := c.service.GetLists(userId, completedBool)
 	if err != nil {
 		if err.Error() == "action not allowed" {
 			ctx.AbortWithError(http.StatusForbidden, err)
