@@ -188,15 +188,15 @@ func (db *TodoListDBImpl) GetLists(userId string, completedBool *bool) ([]*model
 
 	if completedBool != nil {
 
-		var filtredList []*models.TodoList
+		var filteredList []*models.TodoList
 
 		for _, list := range user.Todolists {
 			if list.Completed == *completedBool {
-				filtredList = append(filtredList, list)
+				filteredList = append(filteredList, list)
 			}
 		}
 
-		return filtredList, nil
+		return filteredList, nil
 	}
 
 	return user.Todolists, nil
