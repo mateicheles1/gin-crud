@@ -5,5 +5,5 @@ type TodoListPatchDTO struct {
 }
 
 type TodoPatchDTO struct {
-	Completed bool `json:"completed" binding:"required"`
+	Completed bool `json:"completed"`
 }

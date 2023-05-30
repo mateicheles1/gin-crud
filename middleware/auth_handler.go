@@ -21,6 +21,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		if !strings.HasPrefix(header, "Bearer ") {
+			ctx.AbortWithError(http.StatusUnauthorized, errors.New("invalid header"))
+			return
+		}
+
 		headerToken := strings.TrimPrefix(header, "Bearer ")
 
 		token, err := jwt.Parse(headerToken, func(token *jwt.Token) (interface{}, error) {
