@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mateicheles1/golang-crud/config"
 	"github.com/mateicheles1/golang-crud/controllers"
@@ -22,6 +23,11 @@ func SetupRoutes() {
 
 	router := gin.New()
 
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = append(corsConfig.AllowHeaders, "Authorization")
+
+	router.Use(cors.New(corsConfig))
 	router.Use(middleware.InfoHandler())
 	router.Use(middleware.ErrorHandler())
 	router.Use(gin.Recovery())
