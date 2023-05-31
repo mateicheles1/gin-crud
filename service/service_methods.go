@@ -400,5 +400,14 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 		return "", err
 	}
 
+	DBtoken := models.JWT{
+		UserId: user.Id,
+		Token:  signedToken,
+	}
+
+	if tokenErr := s.db.StoreJWT(&DBtoken); tokenErr != nil {
+		return "", err
+	}
+
 	return signedToken, nil
 }

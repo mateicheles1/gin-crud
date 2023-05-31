@@ -93,6 +93,7 @@ func (c *Controller) GetTodo(ctx *gin.Context) {
 	todo, err := c.service.GetTodo(todoId, userId)
 
 	if err != nil {
+
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, "todo not found")
 			return

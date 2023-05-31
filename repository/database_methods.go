@@ -203,9 +203,11 @@ func (db *TodoListDBImpl) GetLists(userId string, completedBool *bool) ([]*model
 		var filteredList []*models.TodoList
 
 		for _, list := range user.Todolists {
+
 			if list.Completed == *completedBool {
 				filteredList = append(filteredList, list)
 			}
+
 		}
 
 		return filteredList, nil
@@ -240,4 +242,13 @@ func (db *TodoListDBImpl) Login(reqBody *data.UserLoginDTO) (*models.User, error
 	}
 
 	return &user, nil
+}
+
+func (db *TodoListDBImpl) StoreJWT(jwt *models.JWT) error {
+
+	if err := db.lists.Create(jwt).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

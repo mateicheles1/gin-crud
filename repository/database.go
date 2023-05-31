@@ -15,7 +15,7 @@ func NewDatabase(config config.Config) *gorm.DB {
 		logs.Logger.Fatal().Msgf("Failed to connect to DB: %s", err)
 	}
 
-	if err := db.AutoMigrate(&models.User{}, &models.TodoList{}, &models.Todo{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.JWT{}, &models.TodoList{}, &models.Todo{}); err != nil {
 		logs.Logger.Fatal().Msgf("Failed to migrate schema: %s", err)
 	}
 
