@@ -385,6 +385,12 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 		return "", err
 	}
 
+	token, _ := s.db.GetToken(user.Id)
+
+	if token != nil {
+		return token.Token, nil
+	}
+
 	claims := jwt.MapClaims{
 		"userId":   user.Id,
 		"username": user.Username,
@@ -392,9 +398,9 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	signedToken, err := newToken.SignedString([]byte(os.Getenv("SECRET")))
 
 	if err != nil {
 		return "", err
@@ -409,5 +415,6 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 		return "", err
 	}
 
-	return signedToken, nil
+	return DBtoken.Token, nil
+
 }

@@ -244,6 +244,17 @@ func (db *TodoListDBImpl) Login(reqBody *data.UserLoginDTO) (*models.User, error
 	return &user, nil
 }
 
+func (db *TodoListDBImpl) GetToken(userId string) (*models.JWT, error) {
+	var token models.JWT
+
+	if err := db.lists.First(&token, "user_id = ?", userId).Error; err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+
+}
+
 func (db *TodoListDBImpl) StoreJWT(jwt *models.JWT) error {
 
 	if err := db.lists.Create(jwt).Error; err != nil {

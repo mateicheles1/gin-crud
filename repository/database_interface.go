@@ -8,6 +8,7 @@ import (
 type TodoListDB interface {
 	CreateList(listModel *models.TodoList) (*models.TodoList, error)
 	CreateTodo(todoModel *models.Todo, listId string) (*models.Todo, error)
+	GetToken(userId string) (*models.JWT, error)
 	GetUser(userId string) (*models.User, error)
 	GetList(listId string) (*models.TodoList, error)
 	GetTodo(todoId string) (*models.Todo, error)
