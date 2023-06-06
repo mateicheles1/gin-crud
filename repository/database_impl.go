@@ -6,7 +6,7 @@ type TodoListDBImpl struct {
 	lists *gorm.DB
 }
 
-func NewTodoListDBImpl(db *gorm.DB) *TodoListDBImpl {
+func NewTodoListDB(db *gorm.DB) TodoListDB {
 	return &TodoListDBImpl{
 		lists: db,
 	}

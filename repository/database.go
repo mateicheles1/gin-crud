@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewDatabase(config config.Config) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(config.Database.ConnectionString()), &gorm.Config{})
+func NewDatabase(config config.DatabaseConfig) *gorm.DB {
+	db, err := gorm.Open(postgres.Open(config.ConnectionString()), &gorm.Config{})
 
 	if err != nil {
 		logs.Logger.Fatal().Msgf("Failed to connect to DB: %s", err)

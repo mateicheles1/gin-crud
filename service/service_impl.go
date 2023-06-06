@@ -6,7 +6,7 @@ type TodoListServiceImpl struct {
 	db repository.TodoListDB
 }
 
-func NewTodolistServiceImpl(db repository.TodoListDB) *TodoListServiceImpl {
+func NewTodolistService(db repository.TodoListDB) TodoListService {
 	return &TodoListServiceImpl{
 		db: db,
 	}

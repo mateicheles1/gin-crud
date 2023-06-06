@@ -15,9 +15,9 @@ import (
 func SetupRoutes() {
 
 	config := config.NewConfig("./config/config.json")
-	db := repository.NewDatabase(config)
-	data := repository.NewTodoListDBImpl(db)
-	service := service.NewTodolistServiceImpl(data)
+	db := repository.NewDatabase(config.Database)
+	data := repository.NewTodoListDB(db)
+	service := service.NewTodolistService(data)
 	controller := controllers.NewController(service)
 
 	router := gin.New()
