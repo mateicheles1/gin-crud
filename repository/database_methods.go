@@ -244,7 +244,7 @@ func (db *TodoListDBImpl) Login(reqBody *data.UserLoginDTO) (*models.User, error
 	return &user, nil
 }
 
-func (db *TodoListDBImpl) GetToken(userId string) (*models.JWT, error) {
+func (db *TodoListDBImpl) GetJWT(userId string) (*models.JWT, error) {
 	var token models.JWT
 
 	if err := db.lists.First(&token, "user_id = ?", userId).Error; err != nil {

@@ -14,21 +14,21 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		header := ctx.GetHeader("Authorization")
+		authHeader := ctx.GetHeader("Authorization")
 
-		if header == "" {
+		if authHeader == "" {
 			ctx.AbortWithError(http.StatusUnauthorized, errors.New("no authorization header provided"))
 			return
 		}
 
-		if !strings.HasPrefix(header, "Bearer ") {
+		if !strings.HasPrefix(authHeader, "Bearer ") {
 			ctx.AbortWithError(http.StatusUnauthorized, errors.New("invalid header"))
 			return
 		}
 
-		headerToken := strings.TrimPrefix(header, "Bearer ")
+		authToken := strings.TrimPrefix(authHeader, "Bearer ")
 
-		token, err := jwt.Parse(headerToken, func(token *jwt.Token) (interface{}, error) {
+		parsedToken, err := jwt.Parse(authToken, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("invalid signing method: %v", token.Header["alg"])
 			}
@@ -41,9 +41,9 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
+		claims, ok := parsedToken.Claims.(jwt.MapClaims)
 
-		if !ok || !token.Valid {
+		if !ok || !parsedToken.Valid {
 			ctx.AbortWithError(http.StatusUnauthorized, errors.New("invalid token"))
 			return
 		}

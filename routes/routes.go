@@ -22,8 +22,8 @@ func SetupRoutes() {
 
 	router := gin.New()
 
-	router.Use(middleware.InfoHandler())
-	router.Use(middleware.ErrorHandler())
+	router.Use(middleware.InfoMiddleware())
+	router.Use(middleware.ErrorMiddleware())
 	router.Use(gin.Recovery())
 
 	router.POST("api/v3/users/signup", controller.CreateUser)

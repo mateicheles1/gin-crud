@@ -7,7 +7,7 @@ import (
 	"github.com/mateicheles1/golang-crud/logs"
 )
 
-func ErrorHandler() gin.HandlerFunc {
+func ErrorMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		ctx.Next()
