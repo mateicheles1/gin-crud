@@ -20,4 +20,5 @@ type TodoListDB interface {
 	CreateUser(userModel *models.User) (*models.User, error)
 	Login(reqBody *data.UserLoginDTO) (*models.User, error)
 	StoreJWT(jwt *models.JWT) error
+	DeleteJWT(userId string) error
 }

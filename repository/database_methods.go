@@ -263,3 +263,12 @@ func (db *TodoListDBImpl) StoreJWT(jwt *models.JWT) error {
 
 	return nil
 }
+
+func (db *TodoListDBImpl) DeleteJWT(userId string) error {
+
+	if err := db.lists.Where("user_id = ?", userId).Delete(&models.JWT{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -388,14 +388,31 @@ func (s *TodoListServiceImpl) Login(reqBody *data.UserLoginDTO) (string, error) 
 	token, _ := s.db.GetToken(user.Id)
 
 	if token != nil {
-		return token.Token, nil
+		parsedToken, _, err := new(jwt.Parser).ParseUnverified(token.Token, jwt.MapClaims{})
+
+		if err != nil {
+			return "", err
+		}
+
+		if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok {
+			now := time.Now().Unix()
+
+			if int64(claims["exp"].(float64)) > now {
+				return token.Token, nil
+			} else {
+				if err := s.db.DeleteJWT(token.UserId); err != nil {
+					return "", err
+				}
+			}
+		}
+
 	}
 
 	claims := jwt.MapClaims{
 		"userId":   user.Id,
 		"username": user.Username,
 		"role":     user.Role,
-		"exp":      time.Now().Add(time.Hour * 24 * 30).Unix(),
+		"exp":      time.Now().Add(time.Hour * 24 * 15).Unix(),
 	}
 
 	newToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
