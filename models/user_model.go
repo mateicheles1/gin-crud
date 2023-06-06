@@ -6,5 +6,5 @@ type User struct {
 	Password  string      `gorm:"not null"`
 	Role      string      `gorm:"not null"`
 	Todolists []*TodoList `gorm:"foreignKey:UserId;constraint:onDelete:CASCADE,onUpdate:CASCADE"`
-	Token     JWT         `gorm:"foreginKey:UserId; constraint:onDelete:CASCADE"`
+	Token     JWT         `gorm:"foreginKey:UserId;constraint:onDelete:CASCADE"`
 }
